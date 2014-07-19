@@ -10,9 +10,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Clase para la carga de los datos
+ * 
+ * @author Iñigo Serrano <contacto@inigoserrano.com>
+ * 
+ */
 public class CargarDatos {
 
-	public List<Map<String, String>> cargarDatos(final String nombreFichero, final String... nombreCampos) {
+	/**
+	 * Nombre del fichero de donde cargar los datos
+	 */
+	private String nombreFichero;
+
+	/**
+	 * Si hay que saltarse la primera línea
+	 */
+	private boolean saltarPrimeraLinea = true;
+
+	/**
+	 * Carga el fichero con los datos
+	 * 
+	 * @param nombreFichero
+	 *            Nombre del fichero a cargar
+	 * @param nombreCampos
+	 *            Nombre de cada campo
+	 * @return Lista con un map por cada línea
+	 * @throws IOException
+	 *             Si error al leer el fichero
+	 * @throws FileNotFoundException
+	 *             Si no encuentra el fichero
+	 */
+	public List<Map<String, String>> cargarDatos(final String nombreFichero, final String... nombreCampos)
+			throws FileNotFoundException, IOException {
+		this.nombreFichero = nombreFichero;
 		List<Map<String, String>> listaDatos = new ArrayList<Map<String, String>>();
 		try (FileReader ficheroDatos = new FileReader(nombreFichero)) {
 
@@ -22,8 +53,9 @@ public class CargarDatos {
 			Scanner scanner = null;
 			int index = 0;
 
-			// La primera línea me la salto
-			reader.readLine();
+			if (this.saltarPrimeraLinea) {
+				reader.readLine();
+			}
 			while ((linea = reader.readLine()) != null) {
 				HashMap<String, String> emp = new HashMap<>();
 				scanner = new Scanner(linea);
@@ -37,13 +69,25 @@ public class CargarDatos {
 				listaDatos.add(emp);
 			}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return listaDatos;
 
+	}
+
+	public String getNombreFichero() {
+		return this.nombreFichero;
+	}
+
+	public void setNombreFichero(final String nombreFichero) {
+		this.nombreFichero = nombreFichero;
+	}
+
+	public boolean isSaltarPrimeraLinea() {
+		return this.saltarPrimeraLinea;
+	}
+
+	public void setSaltarPrimeraLinea(final boolean saltarPrimeraLinea) {
+		this.saltarPrimeraLinea = saltarPrimeraLinea;
 	}
 
 }
