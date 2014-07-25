@@ -4,11 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+
+import com.inigoserrano.bigweather.Datos;
 
 /**
  * Clase para la carga de los datos
@@ -41,10 +40,10 @@ public class CargarDatos {
 	 * @throws FileNotFoundException
 	 *             Si no encuentra el fichero
 	 */
-	public List<Map<String, String>> cargarDatos(final String nombreFichero, final String... nombreCampos)
-			throws FileNotFoundException, IOException {
+	public Datos cargarDatos(final String nombreFichero, final String... nombreCampos) throws FileNotFoundException,
+			IOException {
 		this.nombreFichero = nombreFichero;
-		List<Map<String, String>> listaDatos = new ArrayList<Map<String, String>>();
+		Datos datos = new Datos();
 		try (FileReader ficheroDatos = new FileReader(nombreFichero)) {
 
 			BufferedReader reader = new BufferedReader(ficheroDatos);
@@ -57,21 +56,23 @@ public class CargarDatos {
 				reader.readLine();
 			}
 			while ((linea = reader.readLine()) != null) {
-				HashMap<String, String> emp = new HashMap<>();
+				HashMap<String, String> datosLinea = new HashMap<>();
 				scanner = new Scanner(linea);
 				scanner.useDelimiter("\t");
 				while (scanner.hasNext()) {
 					String data = scanner.next();
-					emp.put(nombreCampos[index], data);
+					if (index < nombreCampos.length) {
+						datosLinea.put(nombreCampos[index], data);
+					}
 					index++;
 				}
 				index = 0;
-				listaDatos.add(emp);
+				// Meto los datos en la hash, se asume que la key es la primera columna
+				datos.addCaptura(datosLinea.get(nombreCampos[0]), datosLinea);
 			}
 
 		}
-		return listaDatos;
-
+		return datos;
 	}
 
 	public String getNombreFichero() {
