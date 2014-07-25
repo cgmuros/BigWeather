@@ -11,7 +11,7 @@ public class MapWeather implements Mapper<String, Map<String, String>, String, S
 
 	@Override
 	public void map(final String key, final Map<String, String> datos, final Collector<String, String> colector) {
-		String fechaHora = datos.get("Time Interval(mi)");
+		String fechaHora = datos.get("Time");
 		SimpleDateFormat sdfCompleto = new SimpleDateFormat("dd-MM-yyyy hh:mm");
 		SimpleDateFormat sdfFecha = new SimpleDateFormat("dd-MM-yyyy");
 		try {

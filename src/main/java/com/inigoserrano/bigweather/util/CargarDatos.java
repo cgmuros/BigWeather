@@ -5,9 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
-import com.inigoserrano.bigweather.Datos;
+import com.inigoserrano.bigweather.AlmacenDatos;
 
 /**
  * Clase para la carga de los datos
@@ -16,6 +18,13 @@ import com.inigoserrano.bigweather.Datos;
  * 
  */
 public class CargarDatos {
+
+	public CargarDatos(final AlmacenDatos almacenDatos) {
+		super();
+		this.cache = almacenDatos;
+	}
+
+	private final AlmacenDatos cache;
 
 	/**
 	 * Nombre del fichero de donde cargar los datos
@@ -40,10 +49,9 @@ public class CargarDatos {
 	 * @throws FileNotFoundException
 	 *             Si no encuentra el fichero
 	 */
-	public Datos cargarDatos(final String nombreFichero, final String... nombreCampos) throws FileNotFoundException,
+	public void cargarDatos(final String nombreFichero, final List<String> nombreCampos) throws FileNotFoundException,
 			IOException {
 		this.nombreFichero = nombreFichero;
-		Datos datos = new Datos();
 		try (FileReader ficheroDatos = new FileReader(nombreFichero)) {
 
 			BufferedReader reader = new BufferedReader(ficheroDatos);
@@ -61,18 +69,29 @@ public class CargarDatos {
 				scanner.useDelimiter("\t");
 				while (scanner.hasNext()) {
 					String data = scanner.next();
-					if (index < nombreCampos.length) {
-						datosLinea.put(nombreCampos[index], data);
+					if (index < nombreCampos.size()) {
+						datosLinea.put(nombreCampos.get(index), data);
 					}
 					index++;
 				}
 				index = 0;
 				// Meto los datos en la hash, se asume que la key es la primera columna
-				datos.addCaptura(datosLinea.get(nombreCampos[0]), datosLinea);
+				this.cache.addCaptura(datosLinea.get(nombreCampos.get(0)), datosLinea);
 			}
 
 		}
-		return datos;
+	}
+
+	public void cargarDatos(final Map<String, String> nuevosDatos, final List<String> nombreCampos)
+			throws FileNotFoundException, IOException {
+
+		for (String unaKey : nuevosDatos.keySet()) {
+			HashMap<String, String> datosLinea = new HashMap<>();
+			datosLinea.put(nombreCampos.get(0), unaKey);
+			datosLinea.put(nombreCampos.get(1), nuevosDatos.get(unaKey));
+			this.cache.addCaptura(datosLinea.get(nombreCampos.get(0)), datosLinea);
+		}
+
 	}
 
 	public String getNombreFichero() {
