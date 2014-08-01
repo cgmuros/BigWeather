@@ -16,9 +16,14 @@ function programa(){
 	var maximosDiarios = bigWeather.crearAlmacenDatos("maximosDiarios");
 	maximosDiarios.definirKey("dia");
 	maximosDiarios.definirDatos("dia","temperaturaMaxima");
-	maximosDiarios.cargarDatos(fichero2014.mapReduce("mapDiaTemperatura","reduceTemperaturaMaxima"));
-	//maximosDiarios.cargarDatos(fichero2014.groupBy("dia","max","Outdoor Temperature(°C)"));
+	maximosDiarios.cargarDatos(fichero2014.groupBy("dia","max","Outdoor Temperature(°C)"));
 	maximosDiarios.mostrar();
+	
+	var minimosDiarios = bigWeather.crearAlmacenDatos("minimosDiarios");
+	minimosDiarios.definirKey("dia");
+	minimosDiarios.definirDatos("dia","temperaturaMinima");
+	minimosDiarios.cargarDatos(fichero2014.groupBy("dia","min","Outdoor Temperature(°C)"));
+	minimosDiarios.mostrar();
 }
 
 

@@ -4,16 +4,22 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.inigoserrano.bigweather.groupByFuntion.GroupByFunction;
+import com.inigoserrano.bigweather.groupByFuntion.MaxGroupByFunctionImpl;
+import com.inigoserrano.bigweather.groupByFuntion.MinGroupByFunctionImpl;
 import com.inigoserrano.bigweather.transformer.Transformer;
 
 public class BigWeatherFachada {
 
 	private final File fichero;
 	private static final Map<String, Transformer> transformers = new HashMap<String, Transformer>();
+	private static final Map<String, GroupByFunction> functions = new HashMap<String, GroupByFunction>();
 
 	public BigWeatherFachada(final File fichero) {
 		super();
 		this.fichero = fichero;
+		functions.put("max", new MaxGroupByFunctionImpl());
+		functions.put("min", new MinGroupByFunctionImpl());
 
 	}
 
@@ -34,5 +40,9 @@ public class BigWeatherFachada {
 
 	public static Transformer getTransformer(final String transformerName) {
 		return transformers.get(transformerName);
+	}
+
+	public static GroupByFunction getFunction(final String functionName) {
+		return functions.get(functionName);
 	}
 }

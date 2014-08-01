@@ -13,12 +13,12 @@ import org.infinispan.Cache;
 import org.infinispan.distexec.mapreduce.MapReduceTask;
 import org.infinispan.manager.DefaultCacheManager;
 
-import com.inigoserrano.bigweather.util.CargarDatos;
 import com.inigoserrano.bigweather.util.AddColumMapWeather;
-import com.inigoserrano.bigweather.util.GroupByMapWeather;
-import com.inigoserrano.bigweather.util.MostrarDatos;
 import com.inigoserrano.bigweather.util.AddColumReducerWeather;
+import com.inigoserrano.bigweather.util.CargarDatos;
+import com.inigoserrano.bigweather.util.GroupByMapWeather;
 import com.inigoserrano.bigweather.util.GroupByReducerWeather;
+import com.inigoserrano.bigweather.util.MostrarDatos;
 
 public class AlmacenDatos {
 
@@ -85,11 +85,12 @@ public class AlmacenDatos {
 		return this;
 	}
 
-	public Map<String, String> mapReduce(final String funcionMap, final String funcionReduce) {
+	public Map<String, String> groupBy(final String sourceColumn, final String funcionReduce,
+			final String functionColumn) {
 		MapReduceTask<String, Map<String, String>, String, String> t = new MapReduceTask<String, Map<String, String>, String, String>(
 				this.datos);
 
-		t.mappedWith(new GroupByMapWeather()).reducedWith(new GroupByReducerWeather());
+		t.mappedWith(new GroupByMapWeather(sourceColumn, functionColumn)).reducedWith(new GroupByReducerWeather(BigWeatherFachada.getFunction(funcionReduce)));
 		return t.execute();
 	}
 
