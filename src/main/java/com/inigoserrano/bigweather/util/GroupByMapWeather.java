@@ -7,7 +7,7 @@ import java.util.Map;
 import org.infinispan.distexec.mapreduce.Collector;
 import org.infinispan.distexec.mapreduce.Mapper;
 
-public class MapWeather implements Mapper<String, Map<String, String>, String, String> {
+public class GroupByMapWeather implements Mapper<String, Map<String, String>, String, String> {
 
 	@Override
 	public void map(final String key, final Map<String, String> datos, final Collector<String, String> colector) {
@@ -17,8 +17,6 @@ public class MapWeather implements Mapper<String, Map<String, String>, String, S
 		try {
 			String fecha = sdfFecha.format(sdfCompleto.parse(fechaHora));
 			colector.emit(fecha, datos.get("Outdoor Temperature(°C)"));
-			System.out.println("Emito: key[" + key + "] fecha y hora[" + fechaHora + "] fecha[" + fecha
-					+ "] temperatura[" + datos.get("Outdoor Temperature(°C)") + "]");
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import org.infinispan.distexec.mapreduce.Reducer;
 
-public class ReducerWeather implements Reducer<String, String> {
+public class GroupByReducerWeather implements Reducer<String, String> {
 
 	@Override
 	public String reduce(final String key, final Iterator<String> iter) {

@@ -1,5 +1,6 @@
 package com.inigoserrano.bigweather;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,9 +14,11 @@ import org.infinispan.distexec.mapreduce.MapReduceTask;
 import org.infinispan.manager.DefaultCacheManager;
 
 import com.inigoserrano.bigweather.util.CargarDatos;
-import com.inigoserrano.bigweather.util.MapWeather;
+import com.inigoserrano.bigweather.util.AddColumMapWeather;
+import com.inigoserrano.bigweather.util.GroupByMapWeather;
 import com.inigoserrano.bigweather.util.MostrarDatos;
-import com.inigoserrano.bigweather.util.ReducerWeather;
+import com.inigoserrano.bigweather.util.AddColumReducerWeather;
+import com.inigoserrano.bigweather.util.GroupByReducerWeather;
 
 public class AlmacenDatos {
 
@@ -25,7 +28,10 @@ public class AlmacenDatos {
 
 	private List<String> nombreCampos;
 
-	public AlmacenDatos(final String nombreAlmacen) {
+	private final File fichero;
+
+	public AlmacenDatos(final String nombreAlmacen, final File fichero) {
+		this.fichero = fichero;
 		this.datos = DEFAULT_CACHE_MANAGER.getCache(nombreAlmacen);
 	}
 
@@ -68,6 +74,11 @@ public class AlmacenDatos {
 		return this;
 	}
 
+	public AlmacenDatos seleccionar(final String unCampo, final String... masCampos) {
+
+		return this;
+	}
+
 	public AlmacenDatos mostrar() {
 		MostrarDatos mostrarDatos = new MostrarDatos();
 		mostrarDatos.mostrarDatos(this);
@@ -78,8 +89,21 @@ public class AlmacenDatos {
 		MapReduceTask<String, Map<String, String>, String, String> t = new MapReduceTask<String, Map<String, String>, String, String>(
 				this.datos);
 
-		t.mappedWith(new MapWeather()).reducedWith(new ReducerWeather());
+		t.mappedWith(new GroupByMapWeather()).reducedWith(new GroupByReducerWeather());
 		return t.execute();
+	}
+
+	public AlmacenDatos anadirColumna(final String newColumName, final String originalColumName,
+			final String transformerName) {
+
+		MapReduceTask<String, Map<String, String>, String, String> t = new MapReduceTask<String, Map<String, String>, String, String>(
+				this.datos);
+		t.mappedWith(new AddColumMapWeather(originalColumName, BigWeatherFachada.getTransformer(transformerName)))
+				.reducedWith(new AddColumReducerWeather(this, newColumName));
+		// No necesitamos el map para nada
+		Map<String, String> map = t.execute();
+
+		return this;
 	}
 
 }
