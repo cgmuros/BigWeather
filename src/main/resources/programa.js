@@ -10,7 +10,10 @@ function programa(){
 	fichero2014.seleccionar("Time","Outdoor Temperature(°C)");
 	fichero2014.anadirColumna("dia","Time","transformadorFecha");
 	fichero2014.anadirColumna("hora","Time","transformadorHora");
+	bigWeather.defineFilter("dia").greaterThan("01-01-2014");
 	//fichero2014.filtrar("Time").mayorIgualQue("01-01-2013 00:00").menorIgualQue("31-12-2013 24:00");
+	//fichero2014.filtrar("dia","mayorQue","01-01-2014");
+	//fichero2014.filtrar("dia","menorQue","31-12-2014");
 	fichero2014.mostrar();
 	
 	var maximosDiarios = bigWeather.crearAlmacenDatos("maximosDiarios");

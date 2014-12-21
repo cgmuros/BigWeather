@@ -45,4 +45,8 @@ public class BigWeatherFachada {
 	public static GroupByFunction getFunction(final String functionName) {
 		return functions.get(functionName);
 	}
+
+	public Filter defineFilter(final String columName) {
+		return new Filter(columName);
+	}
 }
